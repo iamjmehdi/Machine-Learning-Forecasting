@@ -1,0 +1,479 @@
+---
+title: "R Notebook"
+#output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(stringr)
+```
+
+```{r}
+zoriR = read.csv('zoriR.csv', header = TRUE)
+```
+```{r}
+dim(zoriR)
+```
+```{r}
+#Combined all the month.year columns and careted one Months column
+zoriR = zoriR %>% 
+pivot_longer(., colnames(zoriR)[-c(1:4)], names_to ="Date", values_to = "ZORI")
+```
+
+```{r}
+dim(zoriR)
+```
+```{r}
+# Checking for NA values in ZORI column
+zoriR %>% 
+filter(is.na(ZORI))
+```
+```{r}
+#Removed X in front of months values
+zoriR = zoriR %>% 
+  mutate(., Date = (str_remove_all(zoriR$Date, "X")))
+```
+
+```{r}
+head(zoriR)
+```
+```{r}
+zoriR = zoriR %>% 
+  mutate(., Date= str_replace(zoriR$Date, "\\.", "-"))
+```
+```{r}
+head(zoriR)
+```
+
+```{r}
+#Converted string to date for month and years
+zoriR = zoriR %>% 
+  mutate(., Date= as.Date(paste0(zoriR$Date, "-01")))
+```
+```{r}
+head(zoriR)
+```
+
+```{r}
+zoriR = zoriR %>%
+  mutate(., Year = year(Date)) %>% 
+  mutate(., Month = month(Date))
+```
+
+```{r}
+head(zoriR)
+```
+```{r}
+write.csv(zoriR, "./zoriR1.csv")
+```
+
+```{r}
+# Removed rows containing missing ZORI values and created dataframe zoriN
+zoriN = zoriR %>%
+ filter(., !is.na(ZORI))
+```
+
+```{r}
+dim(zoriN)
+```
+```{r}
+#Combined Region Name and SizeRank into 1 column zipRank for facet_wrap and also computed Median Zori for the year after grouping by region name and year
+zoriN = zoriN %>% 
+  mutate(., zipRank = str_c(RegionName, SizeRank, sep =": ")) %>% 
+  group_by(., RegionName, Year) %>%
+  mutate(., MedianZORI = median(ZORI))
+```
+
+```{r}
+# For SizeRank 1-5 Median ZORI trends in different cities
+zoriN %>%
+  filter(.,SizeRank<=5) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("Cities"))+
+    ggtitle("Median ZORI Trends") +
+  theme(legend.position="bottom")
+```
+```{r}
+# For SizeRank 6-10 Median ZORI trends in different cities
+zoriN %>%
+  filter(.,SizeRank>5 & SizeRank <=10) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("Cities"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+```{r}
+# For SizeRank 11-17 Median ZORI trends in different cities
+zoriN %>%
+  filter(.,SizeRank>10 & SizeRank <=17) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("Cities"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+```{r}
+## For SizeRank 18-25 Median ZORI trends in different cities
+zoriN %>%
+  filter(.,SizeRank>17 & SizeRank <=24) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("Cities"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+```{r}
+## For SizeRank 25-30 Median ZORI trends in different cities
+zoriN %>%
+  filter(.,SizeRank>25 & SizeRank <=30) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("Cities"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+```{r}
+## For SizeRank 31-35 Median ZORI trends in different cities
+zoriN %>%
+  filter(.,SizeRank>30 & SizeRank <=35) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("Cities"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+```{r}
+## For SizeRank 36-40 Median ZORI trends in different cities
+zoriN %>%
+  filter(.,SizeRank>35 & SizeRank <=40) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("Cities"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+```{r}
+zoriN %>%
+  filter(.,SizeRank>40 & SizeRank <=45) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("City"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+```{r}
+zoriN %>%
+  filter(.,SizeRank>45 & SizeRank <=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = MsaName), ) +
+  geom_point()+
+  facet_grid(. ~ zipRank ) +
+  theme_light() +
+    theme(
+    plot.title = element_text(hjust=0.5, face ="bold", size=13),
+    axis.title.x =element_text(size = 11),
+    axis.text.x = element_text(size=7),
+    axis.title.y =element_text(size = 11),
+    axis.text.y = element_text(size=9),
+    legend.title =element_text(size = 11, face="bold"), 
+    legend.text = element_text(size = 10),
+    strip.text.x = element_text(size = 10, colour = "black"),
+    strip.background = element_rect(fill="white")
+    )+
+    xlab("Year")+
+    guides(col=guide_legend("City"))+
+    ggtitle("Median ZORI Trends")+
+  theme(legend.position="bottom")
+```
+
+```{r}
+# Median ZORI over the years for top 12 NY zip codes with rank <50
+zoriN %>%
+  filter(.,MsaName == "New York, NY" & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()#+
+ # facet_grid(. ~ zipRank ) 
+```
+```{r}
+# Median ZORI over the years for top 5 Chicago zip codes with rank <50
+zoriN %>%
+  filter(.,MsaName == "Chicago, IL" & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()#+
+```
+```{r}
+# Median ZORI over the years for top 2 Washington DC zip code with rank <50
+zoriN %>%
+  filter(.,str_detect(MsaName, "DC$") & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()
+```
+
+```{r}
+# Median ZORI over the years for top 15 TX zip codes with rank <50
+zoriN %>%
+  filter(., str_detect(MsaName, "TX$") & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()#+
+```
+```{r}
+# Median ZORI over the years for top 4 CA zip codes with rank <50
+zoriN %>%
+  filter(., str_detect(MsaName, "CA$") & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()#+
+```
+
+```{r}
+# Median ZORI over the years for top Charlotte, NC zip code with rank <50 (34)
+zoriN %>%
+  filter(.,str_detect(MsaName, "NC$") & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()
+```
+```{r}
+# Median ZORI over the years for top Atlanta, GA zip code with rank <50
+zoriN %>%
+  filter(.,str_detect(MsaName, "GA$") & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()
+```
+```{r}
+# Median ZORI over the years for top 2 Nashville, TN zip codes with rank <50
+zoriN %>%
+  filter(.,str_detect(MsaName, "TN$") & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()
+```
+```{r}
+# Median ZORI over the years for top Oklahoma City, OK zip code with rank <50
+zoriN %>%
+  filter(.,str_detect(MsaName, "OK$") & SizeRank<=50) %>% 
+  ggplot(.,aes (x= Year, y = MedianZORI)) + 
+  geom_line(stat ="identity", aes(color = as.factor(zipRank))) +
+  geom_point()
+```
+
+```{r}
+#Seasonality for NewYork zipcode 10025 (SizeRank 1)
+zoriN %>% 
+  filter(., SizeRank ==1 & Year !=2021) %>% 
+  group_by(., Year) %>% 
+  ggplot(.,aes (x= Month, y = ZORI)) +
+   scale_x_continuous(breaks =1:12, labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug","Sep", "Oct", "Nov", "Dec"))+
+  geom_line(stat ="identity", aes(color = as.factor(Year))) +
+  geom_point() 
+ 
+```
+```{r}
+#Seasonality for Chicago zipcode 60657 (SizeRank 2)
+zoriN %>% 
+  filter(., SizeRank ==2 & Year !=2021) %>% 
+  group_by(., Year) %>% 
+  ggplot(.,aes (x= Month, y = ZORI)) +
+   scale_x_continuous(breaks =1:12, labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug","Sep", "Oct", "Nov", "Dec"))+
+  geom_line(stat ="identity", aes(color = as.factor(Year))) +
+  geom_point() 
+```
+```{r}
+#Seasonality for Houston, TX zipcode 77494 (SizeRank 4)
+zoriN %>% 
+  filter(., SizeRank ==4 & Year !=2021) %>% 
+  group_by(., Year) %>% 
+  ggplot(.,aes (x= Month, y = ZORI)) +
+   scale_x_continuous(breaks =1:12, labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug","Sep", "Oct", "Nov", "Dec"))+
+  geom_line(stat ="identity", aes(color = as.factor(Year))) +
+  geom_point() 
+```
+```{r}
+#Nation-wide seasonality with aggregated (sum) rent index
+zoriN %>% 
+  filter(., Year<2021) %>% 
+  group_by(., Month) %>% 
+  mutate(., National_ZORI = sum(ZORI)) %>% 
+  ggplot(.,aes (x= Month, y = National_ZORI)) +
+   scale_x_continuous(breaks =1:12, labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug","Sep", "Oct", "Nov", "Dec"))+
+ geom_line(stat ="identity", color ='blue') +
+  geom_point() 
+```
+
+```{r}
+#Nation-wide seasonality in median rent values for years 2014-2019. Since 2020 affected rent indices nation-wide so left out 2020 and 2021 years
+zoriN %>% 
+  filter(.,Year<2021) %>% 
+  group_by(., Month) %>% 
+  mutate(., National_ZORI = median(ZORI)) %>% 
+  ggplot(.,aes (x= Month, y = National_ZORI)) +
+   scale_x_continuous(breaks =1:12, labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug","Sep", "Oct", "Nov", "Dec"))+
+  geom_line(stat ="identity", color ='blue') +
+  geom_point() 
+```
+
+```{r}
+#Nation-wide yearly trends in median rent indices. Doesn't seem wise to look at yearly nation-wide trends. From here, it appears that overall rent indices have gone up through the years and continued to increase in 2020, however, looking at zip codes individually, that doesn't seem to be the case. Some zip codes, in New York and Chicago have showed significant decline in rent indices.
+zoriN %>% 
+  filter(.,Year< 2021) %>% 
+  group_by(., Year) %>% 
+  mutate(., National_ZORI = median(ZORI)) %>% 
+  ggplot(.,aes (x= Year, y = National_ZORI)) +
+  geom_line(stat ="identity", color ='blue') +
+  geom_point() 
+```
+```{r}
+zoriN %>% 
+  filter(.,Year< 2021) %>% 
+  group_by(., Year) %>% 
+  mutate(., National_ZORI = sum(ZORI)) %>% 
+  ggplot(.,aes (x= Year, y = National_ZORI)) +
+  geom_line(stat ="identity", color ='blue') +
+  geom_point()
+```
+```{r}
+# Seasonal trends
+zoriN %>% 
+  filter(Year < 2021) %>% 
+  mutate(., Season = ifelse(Month %in% c(12,1,2), 'Winter',
+                            ifelse(Month %in% c(3,4,5), 'Spring',
+                                   ifelse(Month %in% c(6,7,8), 'Summer',
+                                          'Fall')
+                                   )
+  )
+  ) %>% 
+  group_by(., Season) %>% 
+  mutate(., Nation_Season_ZORI = median(ZORI)) %>% 
+  ggplot(.,aes (x= Season, y = Nation_Season_ZORI)) +
+  geom_line(stat ="identity", aes(group=1), color ='blue') +
+ geom_point()
+```
+ 
