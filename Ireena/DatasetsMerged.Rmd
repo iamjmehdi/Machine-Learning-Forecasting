@@ -1,0 +1,470 @@
+---
+title: "R Notebook"
+#output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(stringr)
+library(car)
+```
+
+```{r}
+zipcodes2014 = read.csv('./Zip_Code_Files/zip_codes_2014_5yr.csv', header = TRUE)
+```
+
+```{r}
+dim(zipcodes2014)
+```
+
+```{r}
+zipcodes2014 = zipcodes2014 %>% 
+  mutate(., Date = "2014") %>% 
+  select(., -date)
+```
+
+```{r}
+zipcodes2014 = zipcodes2014%>% 
+  mutate(., Date= as.Date(paste0(zipcodes2014$Date, "-01-01")))
+```
+
+```{r}
+zipcodes2014['Date'] = as.Date(zipcodes2014$Date, format = "%Y-%m-%d")
+```
+```{r}
+zipcodes2014 = zipcodes2014 %>%
+  mutate(., Year = year(Date))
+```
+
+```{r}
+head(zipcodes2014[c('Date', 'Year')])
+```
+```{r}
+zipcodes2015 = read.csv('./Zip_Code_Files/zip_codes_2015_5yr.csv', header = TRUE)
+```
+
+```{r}
+dim(zipcodes2015)
+```
+
+```{r}
+zipcodes2015 = zipcodes2015 %>% 
+  mutate(., Date = "2015") %>% 
+  select(., -c(do_date, geoid))
+```
+
+```{r}
+zipcodes2015 = zipcodes2015%>% 
+  mutate(., Date= as.Date(paste0(zipcodes2015$Date, "-01-01")))
+```
+
+```{r}
+zipcodes2015['Date'] = as.Date(zipcodes2015$Date, format = "%Y-%m-%d")
+```
+```{r}
+zipcodes2015 = zipcodes2015 %>%
+  mutate(., Year = year(Date))
+```
+
+```{r}
+head(zipcodes2015[c('Date', 'Year')])
+```
+```{r}
+zipcodes2016 = read.csv('./Zip_Code_Files/zip_codes_2016_5yr.csv', header = TRUE)
+```
+
+```{r}
+dim(zipcodes2016)
+```
+
+```{r}
+zipcodes2016 = zipcodes2016 %>% 
+  mutate(., Date = "2016") %>% 
+  select(., -c(do_date, pop_5_years_over, speak_only_english_at_home, speak_spanish_at_home, speak_spanish_at_home_low_english, pop_15_and_over, pop_never_married, pop_now_married, pop_separated, pop_widowed, pop_divorced))
+```
+
+```{r}
+zipcodes2016 = zipcodes2016%>% 
+  mutate(., Date= as.Date(paste0(zipcodes2016$Date, "-01-01")))
+```
+
+```{r}
+zipcodes2016['Date'] = as.Date(zipcodes2016$Date, format = "%Y-%m-%d")
+```
+```{r}
+zipcodes2016 = zipcodes2016 %>%
+  mutate(., Year = year(Date))
+```
+
+```{r}
+head(zipcodes2016[c('Date', 'Year')])
+```
+```{r}
+dim(zipcodes2016)
+```
+```{r}
+zipcodes2017 = read.csv('./Zip_Code_Files/zip_codes_2017_5yr.csv', header = TRUE)
+```
+```{r}
+dim(zipcodes2017)
+```
+```{r}
+zipcodes2017 = zipcodes2017 %>% 
+  mutate(., Date = "2017") %>% 
+  select(., -c(do_date, pop_5_years_over, speak_only_english_at_home, speak_spanish_at_home, speak_spanish_at_home_low_english, pop_15_and_over, pop_never_married, pop_now_married, pop_separated, pop_widowed, pop_divorced))
+```
+```{r}
+zipcodes2017 = zipcodes2017%>% 
+  mutate(., Date= as.Date(paste0(zipcodes2017$Date, "-01-01")))
+```
+```{r}
+zipcodes2017['Date'] = as.Date(zipcodes2017$Date, format = "%Y-%m-%d")
+```
+```{r}
+zipcodes2017 = zipcodes2017 %>%
+  mutate(., Year = year(Date))
+```
+```{r}
+head(zipcodes2017[c('Date', 'Year')])
+```
+```{r}
+dim(zipcodes2017)
+```
+```{r}
+zipcodes2018 = read.csv('./Zip_Code_Files/zip_codes_2018.csv', header = TRUE)
+```
+```{r}
+dim(zipcodes2018)
+```
+```{r}
+zipcodes2018 = zipcodes2018 %>% 
+  mutate(., Date = "2018") %>% 
+  select(., -c(do_date, pop_5_years_over, speak_only_english_at_home, speak_spanish_at_home, speak_spanish_at_home_low_english, pop_15_and_over, pop_never_married, pop_now_married, pop_separated, pop_widowed, pop_divorced))
+```
+```{r}
+zipcodes2018 = zipcodes2018%>% 
+  mutate(., Date= as.Date(paste0(zipcodes2018$Date, "-01-01")))
+```
+```{r}
+zipcodes2018['Date'] = as.Date(zipcodes2018$Date, format = "%Y-%m-%d")
+```
+```{r}
+zipcodes2018 = zipcodes2018 %>%
+  mutate(., Year = year(Date))
+```
+```{r}
+head(zipcodes2018[c('Date', 'Year')])
+```
+```{r}
+dim(zipcodes2018)
+```
+```{r}
+acs16_17=bind_rows(zipcodes2016, zipcodes2017)
+```
+```{r}
+acs15_16_17 = bind_rows(zipcodes2015, acs16_17)
+```
+```{r}
+acs15_16_17_18 = bind_rows(zipcodes2018, acs15_16_17)
+```
+```{r}
+acs_all = bind_rows(zipcodes2014, acs15_16_17_18)
+```
+```{r}
+head(acs_all)
+```
+```{r}
+acs_all = acs_all %>% 
+  rename(., RegionName = geo_id)
+```
+```{r}
+head(acs_all)
+```
+
+```{r}
+zoriN = read.csv('./zoriN.csv', header = TRUE)
+```
+```{r}
+zori_acs = zoriN %>% 
+  full_join(., acs_all, by = c("Year", "RegionName"))
+```
+```{r}
+cor(zori_acs)
+```
+```{r}
+zacs_features= read.csv('./zacs_features.csv', header = TRUE)
+```
+```{r}
+dim(zacs_features)
+```
+```{r}
+zacs_features = zacs_features %>% 
+  select(., -X)
+```
+
+```{r}
+zacs_features.empty = lm(ZORI ~ 1, data = zacs_features)
+zacs_features.full = lm(ZORI ~ ., data = zacs_features)
+scope = list(lower = formula(zacs_features.empty), upper = formula(zacs_features.full))
+```
+```{r}
+bothBIC_zacs_features.empty =  step(zacs_features.empty, scope, direction = "both", k = log(155777), verbose=FALSE)
+```
+```{r}
+summary(bothBIC_zacs_features.empty)
+```
+
+```{r}
+as.data.frame(vif(bothBIC_zacs_features.empty)) %>% 
+  arrange(desc(vif(bothBIC_zacs_features.empty)))
+```
+```{r}
+zacs_features_bicBased =zacs_features %>% 
+  select(., -c(income_75000_99999, dwellings_20_to_49_units, hispanic_pop))
+```
+```{r}
+zacs_features_bicBased.empty = lm(ZORI ~ 1, data = zacs_features_bicBased)
+zacs_features_bicBased.full = lm(ZORI ~ ., data = zacs_features_bicBased)
+scope = list(lower = formula(zacs_features_bicBased.empty), upper = formula(zacs_features_bicBased.full))
+```
+```{r}
+bothBIC_zacs_features_bicBased.empty=  step(zacs_features_bicBased.empty, scope, direction = "both", k = log(155777), verbose=FALSE)
+```
+```{r}
+summary(bothBIC_zacs_features_bicBased.empty)
+```
+```{r}
+as.data.frame(vif(bothBIC_zacs_features_bicBased.empty)) %>% 
+  arrange(desc(vif(bothBIC_zacs_features_bicBased.empty)))
+```
+
+
+```{r}
+zacs_features_vif1 = zacs_features_bicBased %>% 
+  select(., - management_business_sci_arts_employed)
+```
+```{r}
+zacs_features_vif1.empty = lm(ZORI ~ 1, data = zacs_features_vif1)
+zacs_features_vif1.full = lm(ZORI ~ ., data = zacs_features_vif1)
+scope = list(lower = formula(zacs_features_vif1.empty), upper = formula(zacs_features_vif1.full))
+```
+```{r}
+bothBIC_zacs_features_vif1.empty  =  step(zacs_features_vif1.empty, scope, direction = "both", k = log(155777), verbose=FALSE)
+```
+```{r}
+# After removing feature "management_business_sci_arts_employed", which was giving me highest multicollinearity
+as.data.frame(vif(bothBIC_zacs_features_vif1.empty)) %>% 
+  arrange(desc(vif(bothBIC_zacs_features_vif1.empty)))
+```
+```{r}
+zacs_features_vif2 = zacs_features_vif1 %>% 
+  select(., - bachelors_degree_or_higher_25_64)
+```
+```{r}
+zacs_features_vif2.empty = lm(ZORI ~ 1, data = zacs_features_vif2)
+zacs_features_vif2.full = lm(ZORI ~ ., data = zacs_features_vif2)
+scope = list(lower = formula(zacs_features_vif2.empty), upper = formula(zacs_features_vif2.full))
+```
+```{r}
+bothBIC_zacs_features_vif2.empty  =  step(zacs_features_vif2.empty, scope, direction = "both", k = log(155777), verbose=FALSE)
+```
+```{r}
+# After removing feature "bachelors_degree_or_higher_25_64", which was giving me highest multicollinearity
+as.data.frame(vif(bothBIC_zacs_features_vif2.empty)) %>% 
+  arrange(desc(vif(bothBIC_zacs_features_vif2.empty)))
+```
+```{r}
+zacs_features_vif3 = zacs_features_vif2 %>% 
+  select(., - nonfamily_households)
+```
+```{r}
+zacs_features_vif3.empty = lm(ZORI ~ 1, data = zacs_features_vif3)
+zacs_features_vif3.full = lm(ZORI ~ ., data = zacs_features_vif3)
+scope = list(lower = formula(zacs_features_vif3.empty), upper = formula(zacs_features_vif3.full))
+```
+```{r}
+bothBIC_zacs_features_vif3.empty  =  step(zacs_features_vif3.empty, scope, direction = "both", k = log(155777), verbose=FALSE)
+```
+```{r}
+# After removing feature "nonfamily_households", which was giving me highest multicollinearity
+as.data.frame(vif(bothBIC_zacs_features_vif3.empty)) %>% 
+  arrange(desc(vif(bothBIC_zacs_features_vif3.empty)))
+```
+
+
+```{r}
+# Check Normal Distribution of all features
+qqnorm(zacs_features$ZORI)
+```
+```{r}
+#Removed outliers (really high priced properties, concentrated in just 1 zipcode) in order to normalize ZORI after the log
+zacs_features1 = zacs_features %>% 
+  filter(., ZORI<20000) %>% 
+  mutate(., vacant_housing_units_for_rent = ifelse(vacant_housing_units_for_rent == 0, 1, vacant_housing_units_for_rent))
+```
+```{r}
+write.csv(zacs_features1, "zacs_features1.csv")
+```
+
+```{r}
+dim(zacs_features1)
+```
+```{r}
+# Checking Normal distribution for ZORI
+qqnorm(zacs_features1$ZORI)
+```
+
+```{r}
+qqnorm(log(zacs_features1$ZORI)) 
+qqline(log(zacs_features1$ZORI))
+```
+```{r}
+# Checking Normal distribution for owner_occupied_housing_units_median_value
+qqnorm(zacs_features1$owner_occupied_housing_units_median_value)
+```
+```{r}
+#Log (owner_occupied_housing_units_median_value) is fine
+qqnorm(log(zacs_features1$owner_occupied_housing_units_median_value)) 
+qqline(log(zacs_features1$owner_occupied_housing_units_median_value))
+```
+```{r}
+# Checking Normal distribution for married_households
+qqnorm(zacs_features1$married_households)
+```
+```{r}
+#SQRT(married_households) is fine
+qqnorm(sqrt(zacs_features1$married_households)) 
+qqline(sqrt(zacs_features1$married_households))
+```
+```{r}
+# Checking Normal distribution for renter_occupied_housing_units_paying_cash_median_gross_rent
+qqnorm(zacs_features1$renter_occupied_housing_units_paying_cash_median_gross_rent)
+```
+```{r}
+#log(renter_occupied_housing_units_paying_cash_median_gross_rent) is fine
+qqnorm(log(zacs_features1$renter_occupied_housing_units_paying_cash_median_gross_rent)) 
+qqline(log(zacs_features1$renter_occupied_housing_units_paying_cash_median_gross_rent))
+```
+```{r}
+# Checking Normal distribution for housing_units_renter_occupied
+qqnorm(zacs_features1$housing_units_renter_occupied)
+```
+```{r}
+#log(housing_units_renter_occupied) is fine
+qqnorm(log(zacs_features1$housing_units_renter_occupied)) 
+qqline(log(zacs_features1$housing_units_renter_occupied))
+```
+```{r}
+# Checking Normal distribution for nonfamily_households
+qqnorm(zacs_features1$nonfamily_households)
+```
+```{r}
+#sqrt(nonfamily_households) is fine
+qqnorm(sqrt(zacs_features1$nonfamily_households)) 
+qqline(sqrt(zacs_features1$nonfamily_households))
+```
+```{r}
+# Checking Normal distribution for vacant_housing_units_for_rent
+qqnorm(zacs_features1$vacant_housing_units_for_rent)
+```
+```{r}
+#log (vacant_housing_units_for_rent) is fine
+qqnorm(log(zacs_features1$vacant_housing_units_for_rent))
+qqline(log(zacs_features1$vacant_housing_units_for_rent))
+```
+`
+```{r}
+# Checking Normal distribution for vacant_housing_units_for_rent
+qqnorm(zacs_features1$gini_index)
+qqline(zacs_features1$gini_index)
+```
+```{r}
+#log (gini_index) is fine
+qqnorm(log(zacs_features1$gini_index))
+qqline(log(zacs_features1$gini_index))
+```
+```{r}
+# INCOME RELATED FEATURES
+# Checking Normal distribution for median_income
+qqnorm(zacs_features1$median_income)
+qqline(zacs_features1$median_income)
+```
+```{r}
+#log (gini_index) is fine
+qqnorm(log(zacs_features1$median_income))
+qqline(log(zacs_features1$median_income))
+```
+```{r}
+# Checking Normal distribution for income_200000_or_more
+qqnorm(zacs_features1$income_200000_or_more[zacs_features1$income_200000_or_more>0])
+qqline(zacs_features1$income_200000_or_more[zacs_features1$income_200000_or_more>0])
+```
+```{r}
+#log(income_200000_or_more) is fine. I should mutate 0 values to 1
+qqnorm(log(zacs_features1$income_200000_or_more[zacs_features1$income_200000_or_more!=0]))
+qqline(log(zacs_features1$income_200000_or_more[zacs_features1$income_200000_or_more!=0]))
+```
+```{r}
+# Checking Normal distribution for income_100000_199999
+qqnorm(zacs_features1$income_100000_199999)
+qqline(zacs_features1$income_100000_199999)
+```
+```{r}
+#sqrt(income_100000_199999) is fine. 
+qqnorm(sqrt(zacs_features1$income_100000_199999))
+qqline(sqrt(zacs_features1$income_100000_199999))
+```
+```{r}
+# Checking Normal distribution for income_75000_99999. Seems fine
+qqnorm(zacs_features1$income_75000_99999)
+qqline(zacs_features1$income_75000_99999)
+```
+```{r}
+#sqrt(income_75000_99999) is fine. 
+qqnorm(sqrt(zacs_features1$income_75000_99999))
+qqline(sqrt(zacs_features1$income_75000_99999))
+```
+
+
+```{r}
+# Checking Normal distribution for income_10000_29999.
+qqnorm(zacs_features1$income_10000_29999)
+qqline(zacs_features1$income_10000_29999)
+```
+```{r}
+#log(income_10000_29999) is fine. 
+qqnorm(log(zacs_features1$income_10000_29999))
+qqline(log(zacs_features1$income_10000_29999))
+```
+```{r}
+# Checking Normal distribution for million_dollar_housing_units.
+qqnorm(zacs_features1$million_dollar_housing_units)
+qqline(zacs_features1$million_dollar_housing_units)
+```
+```{r}
+#log(million_dollar_housing_units) is fine. I should make 0 observations as 1 prior to runnning log
+qqnorm(log(zacs_features1$million_dollar_housing_units[zacs_features1$million_dollar_housing_units!=0]))
+qqline(log(zacs_features1$million_dollar_housing_units[zacs_features1$million_dollar_housing_units!=0]))
+```
+```{r}
+# Checking Normal distribution for million_dollar_housing_units.
+qqnorm(zacs_features1$dwellings_50_or_more_units)
+qqline(zacs_features1$dwellings_50_or_more_units)
+```
+```{r}
+#log(dwellings_50_or_more_units) is fine. I should make 0 observations as 1 prior to runnning log
+qqnorm(log(zacs_features1$dwellings_50_or_more_units[zacs_features1$dwellings_50_or_more_units!=0]))
+qqline(log(zacs_features1$dwellings_50_or_more_units[zacs_features1$dwellings_50_or_more_units!=0]))
+```
+```{r}
+# Checking Normal distribution for dwellings_20_to_49_units
+qqnorm(zacs_features1$dwellings_20_to_49_units)
+qqline(zacs_features1$dwellings_20_to_49_units)
+```
+```{r}
+#log(dwellings_20_to_49_units) is fine. I should make 0 observations as 1 prior to running log
+qqnorm(log(zacs_features1$dwellings_20_to_49_units[zacs_features1$dwellings_20_to_49_units!=0]))
+qqline(log(zacs_features1$dwellings_20_to_49_units[zacs_features1$dwellings_20_to_49_units!=0]))
+```
+
