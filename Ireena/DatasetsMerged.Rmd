@@ -11,6 +11,7 @@ library(car)
 ```
 
 ```{r}
+#Read the zipcodes2014 file
 zipcodes2014 = read.csv('./Zip_Code_Files/zip_codes_2014_5yr.csv', header = TRUE)
 ```
 
@@ -19,97 +20,96 @@ dim(zipcodes2014)
 ```
 
 ```{r}
+# Created a date feature
 zipcodes2014 = zipcodes2014 %>% 
   mutate(., Date = "2014") %>% 
   select(., -date)
 ```
-
 ```{r}
 zipcodes2014 = zipcodes2014%>% 
   mutate(., Date= as.Date(paste0(zipcodes2014$Date, "-01-01")))
 ```
-
 ```{r}
 zipcodes2014['Date'] = as.Date(zipcodes2014$Date, format = "%Y-%m-%d")
 ```
 ```{r}
+#Extracted year from Date in a separate Year column
 zipcodes2014 = zipcodes2014 %>%
   mutate(., Year = year(Date))
 ```
 
+
 ```{r}
-head(zipcodes2014[c('Date', 'Year')])
-```
-```{r}
+# Read zipcodes2015 file
 zipcodes2015 = read.csv('./Zip_Code_Files/zip_codes_2015_5yr.csv', header = TRUE)
 ```
-
 ```{r}
 dim(zipcodes2015)
 ```
 
 ```{r}
+# Created a Date feature
 zipcodes2015 = zipcodes2015 %>% 
   mutate(., Date = "2015") %>% 
   select(., -c(do_date, geoid))
 ```
-
 ```{r}
 zipcodes2015 = zipcodes2015%>% 
   mutate(., Date= as.Date(paste0(zipcodes2015$Date, "-01-01")))
 ```
-
 ```{r}
 zipcodes2015['Date'] = as.Date(zipcodes2015$Date, format = "%Y-%m-%d")
 ```
 ```{r}
+# Extracted "Year" information into a "Year" column
 zipcodes2015 = zipcodes2015 %>%
   mutate(., Year = year(Date))
 ```
-
 ```{r}
 head(zipcodes2015[c('Date', 'Year')])
 ```
+
 ```{r}
+# Read zipcodes2016 file
 zipcodes2016 = read.csv('./Zip_Code_Files/zip_codes_2016_5yr.csv', header = TRUE)
 ```
-
 ```{r}
 dim(zipcodes2016)
 ```
-
 ```{r}
+# Created a Date feature and removed columns that had no values
 zipcodes2016 = zipcodes2016 %>% 
   mutate(., Date = "2016") %>% 
   select(., -c(do_date, pop_5_years_over, speak_only_english_at_home, speak_spanish_at_home, speak_spanish_at_home_low_english, pop_15_and_over, pop_never_married, pop_now_married, pop_separated, pop_widowed, pop_divorced))
 ```
-
 ```{r}
 zipcodes2016 = zipcodes2016%>% 
   mutate(., Date= as.Date(paste0(zipcodes2016$Date, "-01-01")))
 ```
-
 ```{r}
 zipcodes2016['Date'] = as.Date(zipcodes2016$Date, format = "%Y-%m-%d")
 ```
 ```{r}
+# Extracted "year" information into a "year" column
 zipcodes2016 = zipcodes2016 %>%
   mutate(., Year = year(Date))
 ```
-
 ```{r}
 head(zipcodes2016[c('Date', 'Year')])
 ```
 ```{r}
 dim(zipcodes2016)
 ```
+
 ```{r}
+# Read zipcodes2017 file
 zipcodes2017 = read.csv('./Zip_Code_Files/zip_codes_2017_5yr.csv', header = TRUE)
 ```
 ```{r}
 dim(zipcodes2017)
 ```
 ```{r}
+# Created a Date feature and removed columns with NA values
 zipcodes2017 = zipcodes2017 %>% 
   mutate(., Date = "2017") %>% 
   select(., -c(do_date, pop_5_years_over, speak_only_english_at_home, speak_spanish_at_home, speak_spanish_at_home_low_english, pop_15_and_over, pop_never_married, pop_now_married, pop_separated, pop_widowed, pop_divorced))
@@ -122,6 +122,7 @@ zipcodes2017 = zipcodes2017%>%
 zipcodes2017['Date'] = as.Date(zipcodes2017$Date, format = "%Y-%m-%d")
 ```
 ```{r}
+# Extracted "year" information from "Date" column
 zipcodes2017 = zipcodes2017 %>%
   mutate(., Year = year(Date))
 ```
@@ -131,13 +132,16 @@ head(zipcodes2017[c('Date', 'Year')])
 ```{r}
 dim(zipcodes2017)
 ```
+
 ```{r}
+# Read zipcodes2018 file
 zipcodes2018 = read.csv('./Zip_Code_Files/zip_codes_2018.csv', header = TRUE)
 ```
 ```{r}
 dim(zipcodes2018)
 ```
 ```{r}
+# Created a Date feature and removed columns with all NA values
 zipcodes2018 = zipcodes2018 %>% 
   mutate(., Date = "2018") %>% 
   select(., -c(do_date, pop_5_years_over, speak_only_english_at_home, speak_spanish_at_home, speak_spanish_at_home_low_english, pop_15_and_over, pop_never_married, pop_now_married, pop_separated, pop_widowed, pop_divorced))
@@ -150,6 +154,7 @@ zipcodes2018 = zipcodes2018%>%
 zipcodes2018['Date'] = as.Date(zipcodes2018$Date, format = "%Y-%m-%d")
 ```
 ```{r}
+# Extracted "year" information from Date column
 zipcodes2018 = zipcodes2018 %>%
   mutate(., Year = year(Date))
 ```
@@ -160,38 +165,81 @@ head(zipcodes2018[c('Date', 'Year')])
 dim(zipcodes2018)
 ```
 ```{r}
+# Combined 2016 and 2017 ACS dataframes
 acs16_17=bind_rows(zipcodes2016, zipcodes2017)
 ```
 ```{r}
+# Combined 2015, 2016 and 2017 ACS dataframes
 acs15_16_17 = bind_rows(zipcodes2015, acs16_17)
 ```
 ```{r}
+# Combined 2015 with the one created above (concatenating rows)
 acs15_16_17_18 = bind_rows(zipcodes2018, acs15_16_17)
 ```
 ```{r}
+# All combined from 2014-2018
 acs_all = bind_rows(zipcodes2014, acs15_16_17_18)
 ```
 ```{r}
 head(acs_all)
 ```
 ```{r}
+# Renamed geo_id as RegionName to match up with the name of zipcode column in ZORI file
 acs_all = acs_all %>% 
   rename(., RegionName = geo_id)
 ```
-```{r}
-head(acs_all)
-```
 
 ```{r}
+# Read the zoriN file
 zoriN = read.csv('./zoriN.csv', header = TRUE)
 ```
 ```{r}
+#Joined acs_all with zoriN
 zori_acs = zoriN %>% 
   full_join(., acs_all, by = c("Year", "RegionName"))
 ```
 ```{r}
-cor(zori_acs)
+# Since "acs_all" had no values corresponding to years 2019-2021, the cells corresponding  to those years were filled in with NAs and thus filtered out rows with Year <=2018. Also filtered out rows that had 'NA' values in ZORI column along with a few other missing values in non-family households. This generated a "zori_acs_cleaned" dataframe with 155777 observations and 248 columns
+zori_acs_cleaned = zori_acs %>% 
+  filter(., Year<=2018) %>% 
+  filter(., !is.na(nonfamily_households)) %>% 
+  filter(., !is.na(ZORI))
 ```
+
+```{r}
+# Engineered a few income related features by aggregating values in smaller bins given in file into larger ranges of income values and removed the columns used in aggregation
+zacs_features_eng= zori_acs_cleaned %>% 
+  mutate(., income_0_29999 = income_less_10000 + income_10000_14999 +income_15000_19999 +income_20000_24999+income_25000_29999) %>% 
+  mutate(.,income_30000_74999 = income_30000_34999 + income_35000_39999 + income_40000_44999 + income_45000_49999+ income_50000_59999+ income_60000_74999) %>% 
+  mutate(., income_100000_199999 = income_100000_124999+income_125000_149999+income_150000_199999) %>% 
+  select(-c(income_less_10000, income_10000_14999, income_15000_19999, income_20000_24999, income_25000_29999, income_100000_124999, income_125000_149999, income_150000_199999, income_30000_34999, income_35000_39999, income_40000_44999, income_45000_49999, income_50000_59999, income_60000_74999)) %>% 
+  mutate(., dwellings_5_to_19_units = dwellings_5_to_9_units + dwellings_10_to_19_units) %>% 
+  select(-c(dwellings_5_to_9_units,dwellings_10_to_19_units)) %>% 
+  mutate(., male_70_and_over = male_70_to_74+ male_75_to_79+ male_80_to_84 + male_85_and_over) %>% 
+  select(-c(male_70_to_74, male_75_to_79, male_80_to_84, male_85_and_over))
+  
+```
+```{r}
+dim(zacs_features_eng)
+```
+```{r}
+#Testing if any of the features have null values
+lapply(zacs_features_eng,function(x) { length(which(is.na(x)))})
+```
+```{r}
+write_csv(zacs_features_eng, "zacs_features_eng.csv")
+```
+
+
+```{r}
+zacs = zacs_features_eng%>% 
+  select(., RegionID, RegionName, ZORI,	Year, Month, renter_occupied_housing_units_paying_cash_median_gross_rent, owner_occupied_housing_units_median_value, married_households,housing_units_renter_occupied,nonfamily_households,vacant_housing_units_for_rent, income_0_29999,	income_75000_99999, median_income,	income_100000_199999,	income_200000_or_more,	million_dollar_housing_units, dwellings_50_or_more_units,	dwellings_20_to_49_units,	dwellings_1_units_detached,	dwellings_1_units_attached, graduate_professional_degree,	bachelors_degree_or_higher_25_64,	employed_information,	management_business_sci_arts_employed,	occupation_natural_resources_construction_maintenance,	median_age,	total_pop,	white_pop,	black_pop,	hispanic_pop,	walked_to_work,	commuters_by_public_transportation,	commute_10_14_mins,	gini_index)
+```
+
+```{r}
+write_csv(zacs, "zacs.csv")
+```
+
 ```{r}
 zacs_features= read.csv('./zacs_features.csv', header = TRUE)
 ```
@@ -306,10 +354,337 @@ zacs_features1 = zacs_features %>%
 ```{r}
 write.csv(zacs_features1, "zacs_features1.csv")
 ```
+```{r}
+head(zacs_features1)
+```
+
+```{r}
+# Transforming the variables and reading them in a new dataframe
+zacs_features2 = zacs_features1 %>% 
+  mutate(., logZORI = log(ZORI),
+         logrenter_occupied_housing_units_paying_cash_median_gross_rent = log(renter_occupied_housing_units_paying_cash_median_gross_rent),
+         logowner_occupied_housing_units_median_value = log(owner_occupied_housing_units_median_value),
+         sqrtmarried_households= sqrt(married_households), 
+         loghousing_units_renter_occupied= log(housing_units_renter_occupied),
+         sqrtnonfamily_households = sqrt(nonfamily_households),
+         logvacant_housing_units_for_rent=log(vacant_housing_units_for_rent), 
+         logmedian_income=log(median_income), 
+         logincome_200000_or_more = log(ifelse(income_200000_or_more == 0, 1, income_200000_or_more)), 
+         sqrtincome_100000_199999 = sqrt(income_100000_199999), 
+         sqrtincome_75000_99999 = sqrt(income_75000_99999), 
+         logincome_0_29999= log(ifelse(income_10000_29999 ==0, 1, income_10000_29999)),
+         logmillion_dollar_housing_units= log(ifelse(million_dollar_housing_units==0, 1, million_dollar_housing_units)),
+         logdwellings_50_or_more_units = log(ifelse(dwellings_50_or_more_units ==0, 1, dwellings_50_or_more_units)),
+         logdwellings_20_to_49_units = log(ifelse(dwellings_20_to_49_units ==0, 1, dwellings_20_to_49_units)),
+         logdwellings_1_units_attached =log(ifelse(dwellings_1_units_attached ==0, 1, dwellings_1_units_attached)),
+         loggraduate_professional_degree = log(graduate_professional_degree), 
+         logbachelors_degree_or_higher_25_64 = log(bachelors_degree_or_higher_25_64), 
+         logemployed_information = log(ifelse(employed_information ==0, 1, employed_information)),
+         logmanagement_business_sci_arts_employed =log(ifelse(management_business_sci_arts_employed == 0, 1,                                           management_business_sci_arts_employed)),
+         sqrtoccupation_natural_resources_construction_maintenance=sqrt(ifelse(occupation_natural_resources_construction_maintenance ==0, 1,occupation_natural_resources_construction_maintenance)),
+         logmedian_age= log(median_age), sqrtwhite_pop =sqrt(white_pop),
+         loghispanic_pop =log(ifelse(hispanic_pop ==0, 1, hispanic_pop)), 
+         sqrttotal_pop =sqrt(ifelse(total_pop == 0, 1, total_pop)), 
+         logblack_pop = log(ifelse(black_pop == 0, 1, black_pop)), 
+         logwalked_to_work = log(ifelse(walked_to_work==0, 1, walked_to_work)), 
+         logcommuters_by_public_transportation = log(ifelse(commuters_by_public_transportation==0, 1, commuters_by_public_transportation)), 
+         logcommute_10_14_mins = log(ifelse(commute_10_14_mins ==0, 1, commute_10_14_mins)),
+         log_gini_index =log(gini_index)     
+ )
+```
+```{r}
+dim(zacs_features2)
+```
+```{r}
+zacs_features2= zacs_features2 %>% 
+  select(.,-c(owner_occupied_housing_units_median_value, renter_occupied_housing_units_paying_cash_median_gross_rent, married_households,housing_units_renter_occupied, nonfamily_households, vacant_housing_units_for_rent,median_income, income_200000_or_more, income_100000_199999, income_75000_99999, income_10000_29999, million_dollar_housing_units,dwellings_50_or_more_units, dwellings_20_to_49_units, dwellings_1_units_attached, graduate_professional_degree, bachelors_degree_or_higher_25_64, employed_information, management_business_sci_arts_employed,occupation_natural_resources_construction_maintenance, median_age, white_pop, hispanic_pop, total_pop, black_pop, walked_to_work, commuters_by_public_transportation, commute_10_14_mins, gini_index, ZORI))
+```
 
 ```{r}
 dim(zacs_features1)
 ```
+```{r}
+dim(zacs_features2)
+```
+```{r}
+zacs_features2$logdwellings_1_units_attached
+```
+
+
+```{r}
+head(zacs_features2)
+```
+```{r}
+write.csv(zacs_features2, "zacs_features2.csv")
+```
+```{r}
+# Stepwise BIC on transformed variables
+zacs_features2.empty = lm(logZORI ~ 1, data = zacs_features2)
+zacs_features2.full = lm(logZORI ~ ., data = zacs_features2)
+scope = list(lower = formula(zacs_features2.empty), upper = formula(zacs_features2.full))
+```
+```{r}
+#Ran both sides BIC on datset containing all transformed features
+bothBIC_zacs_features2.empty =  step(zacs_features2.empty, scope, direction = "both", k = log(155724), verbose=FALSE)
+```
+```{r}
+# With transformed features, got a very negative BIC score of -616982 and in the final equation, it dropped logmillion_dollar_housing_units
+summary(bothBIC_zacs_features2.empty)
+```
+```{r}
+# Checking VIF. VIF still seems pretty high for some features
+as.data.frame(vif(bothBIC_zacs_features2.empty)) %>% 
+  arrange(desc(vif(bothBIC_zacs_features2.empty)))
+```
+
+
+```{r}
+# Created fit1 after examining VIFs and removing the first feature with high vif
+zf2 = zacs_features2 %>% 
+  select(-c(logmanagement_business_sci_arts_employed, logmillion_dollar_housing_units))
+```
+```{r}
+head(zf2)
+```
+
+```{r}
+fit1 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         sqrtmarried_households+
+         loghousing_units_renter_occupied+
+         sqrtnonfamily_households+
+         logvacant_housing_units_for_rent+ logmedian_income+ 
+         logincome_200000_or_more+ 
+         sqrtincome_100000_199999+ 
+         sqrtincome_75000_99999+ 
+         logincome_0_29999+
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logbachelors_degree_or_higher_25_64+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+```{r}
+# Checking VIF. VIF still high, with sqrtmarried_households topping the list now
+as.data.frame(vif(fit1)) %>%
+  arrange(desc(vif(fit1)))
+```
+```{r}
+fit2 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         loghousing_units_renter_occupied+
+         sqrtnonfamily_households+
+         logvacant_housing_units_for_rent+ logmedian_income+ 
+         logincome_200000_or_more+ 
+         sqrtincome_100000_199999+ 
+         sqrtincome_75000_99999+ 
+         logincome_0_29999+
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logbachelors_degree_or_higher_25_64+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+```{r}
+# Checking VIF. VIF still high, with logbachelors_degree_or_higher_25_64 topping the list now
+as.data.frame(vif(fit2)) %>%
+  arrange(desc(vif(fit2)))
+```
+```{r}
+# Removed logbachelors_degree_or_higher_25_64
+fit3 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         loghousing_units_renter_occupied+
+         sqrtnonfamily_households+
+         logvacant_housing_units_for_rent+ logmedian_income+ 
+         logincome_200000_or_more+ 
+         sqrtincome_100000_199999+ 
+         sqrtincome_75000_99999+ 
+         logincome_0_29999+
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+```{r}
+# Checking VIF. VIF still high, with logincome_0_29999 topping the list now
+as.data.frame(vif(fit3)) %>%
+  arrange(desc(vif(fit3)))
+```
+```{r}
+# Removed logincome_0_29999
+fit4 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         loghousing_units_renter_occupied+
+         sqrtnonfamily_households+
+         logvacant_housing_units_for_rent+ logmedian_income+ 
+         logincome_200000_or_more+ 
+         sqrtincome_100000_199999+ 
+         sqrtincome_75000_99999+
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+```{r}
+# Checking VIF. VIF still high, with sqrtincome_100000_199999 topping the list now
+as.data.frame(vif(fit4)) %>%
+  arrange(desc(vif(fit4)))
+```
+```{r}
+# Removed sqrtincome_100000_199999
+fit5 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         loghousing_units_renter_occupied+
+         sqrtnonfamily_households+
+         logvacant_housing_units_for_rent+ logmedian_income+ 
+         logincome_200000_or_more+ 
+         sqrtincome_75000_99999+
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+```{r}
+# Checking VIF. VIF still high, with logmedian_income topping the list now
+as.data.frame(vif(fit5)) %>%
+  arrange(desc(vif(fit5)))
+```
+```{r}
+# Removed logincome_200000_or_more
+fit6 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         loghousing_units_renter_occupied+
+         sqrtnonfamily_households+
+         logvacant_housing_units_for_rent+ logmedian_income+ 
+         sqrtincome_75000_99999+
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+```{r}
+# Checking VIF. VIF still high, with loghousing_units_renter_occupied topping the list now
+as.data.frame(vif(fit6)) %>%
+  arrange(desc(vif(fit6)))
+```
+```{r}
+# Removed loghousing_units_renter_occupied
+fit7 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         sqrtnonfamily_households+
+         logvacant_housing_units_for_rent+ logmedian_income+ 
+         sqrtincome_75000_99999+
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+
+```{r}
+# Checking VIF. VIF still high, with logmedian_income topping the list now
+as.data.frame(vif(fit7)) %>%
+  arrange(desc(vif(fit7)))
+```
+```{r}
+# Removed instead of logmedian_income
+fit8 = lm(logZORI ~ logrenter_occupied_housing_units_paying_cash_median_gross_rent+
+         logowner_occupied_housing_units_median_value+
+         sqrtnonfamily_households+sqrtincome_75000_99999 +
+         logvacant_housing_units_for_rent+ 
+         logdwellings_50_or_more_units+
+         logdwellings_20_to_49_units+
+         logdwellings_1_units_attached+
+         loggraduate_professional_degree+ 
+         logemployed_information+
+         sqrtoccupation_natural_resources_construction_maintenance+
+         logmedian_age+ sqrtwhite_pop+
+         loghispanic_pop+
+         sqrttotal_pop+ 
+         logblack_pop+ 
+         logwalked_to_work+ 
+         logcommuters_by_public_transportation+ 
+         logcommute_10_14_mins+
+         log_gini_index, data = zf2)
+```
+
+```{r}
+# Checking VIF. VIF still high, with logmedian_income topping the list now
+as.data.frame(vif(fit8)) %>%
+  arrange(desc(vif(fit8)))
+```
+
+# Checked Normal distribution for all features chosen in zacs_features1 and transformed them as required, finally creating a new dataframe called zacs_features2 as above.  Following steps were done prior to above feature engineering steps
 ```{r}
 # Checking Normal distribution for ZORI
 qqnorm(zacs_features1$ZORI)
@@ -416,7 +791,7 @@ qqnorm(sqrt(zacs_features1$income_100000_199999))
 qqline(sqrt(zacs_features1$income_100000_199999))
 ```
 ```{r}
-# Checking Normal distribution for income_75000_99999. Seems fine
+# Checking Normal distribution for income_75000_99999
 qqnorm(zacs_features1$income_75000_99999)
 qqline(zacs_features1$income_75000_99999)
 ```
@@ -466,5 +841,251 @@ qqline(zacs_features1$dwellings_20_to_49_units)
 #log(dwellings_20_to_49_units) is fine. I should make 0 observations as 1 prior to running log
 qqnorm(log(zacs_features1$dwellings_20_to_49_units[zacs_features1$dwellings_20_to_49_units!=0]))
 qqline(log(zacs_features1$dwellings_20_to_49_units[zacs_features1$dwellings_20_to_49_units!=0]))
+```
+```{r}
+# Checking Normal distribution for dwellings_1_units_attached
+qqnorm(zacs_features1$dwellings_1_units_attached)
+qqline(zacs_features1$dwellings_1_units_attached)
+```
+```{r}
+#log(dwellings_1_units_attached is fine. I should make 0 observations as 1 prior to running log
+qqnorm(log(zacs_features1$dwellings_1_units_attached[zacs_features1$dwellings_1_units_attached!=0]))
+qqline(log(zacs_features1$dwellings_1_units_attached[zacs_features1$dwellings_1_units_attached!=0]))
+```
+```{r}
+# Checking Normal distribution for dwellings_1_units_attached. This is fine
+qqnorm(zacs_features1$dwellings_1_units_detached)
+qqline(zacs_features1$dwellings_1_units_detached)
+```
+```{r}
+# Checking Normal distribution for graduate_professional_degree
+qqnorm(zacs_features1$graduate_professional_degree)
+qqline(zacs_features1$graduate_professional_degree)
+```
+
+```{r}
+#log(graduate_professional_degree is fine. 
+qqnorm(log(zacs_features1$graduate_professional_degree))
+qqline(log(zacs_features1$graduate_professional_degree))
+```
+```{r}
+# Checking Normal distribution for bachelors_degree_or_higher_25_64
+qqnorm(zacs_features1$bachelors_degree_or_higher_25_64)
+qqline(zacs_features1$bachelors_degree_or_higher_25_64)
+```
+```{r}
+#log(graduate_professional_degree is fine. 
+qqnorm(log(zacs_features1$bachelors_degree_or_higher_25_64))
+qqline(log(zacs_features1$bachelors_degree_or_higher_25_64))
+```
+```{r}
+# Checking Normal distribution for employed_information
+qqnorm(zacs_features1$employed_information)
+qqline(zacs_features1$employed_information)
+```
+```{r}
+#log(employed_information) is fine. 
+qqnorm(log(zacs_features1$employed_information[zacs_features1$employed_information!=0]))
+qqline(log(zacs_features1$employed_information[zacs_features1$employed_information!=0]))
+```
+```{r}
+# Checking Normal distribution for management_business_sci_arts_employed
+qqnorm(zacs_features1$management_business_sci_arts_employed)
+```
+```{r}
+#log(management_business_sci_arts_employed is fine. 
+qqnorm(log(zacs_features1$management_business_sci_arts_employed[zacs_features1$management_business_sci_arts_employed!=0]))
+qqline(log(zacs_features1$management_business_sci_arts_employed[zacs_features1$management_business_sci_arts_employed!=0]))
+```
+```{r}
+# Checking Normal distribution for occupation_natural_resources_construction_maintenance
+qqnorm(zacs_features1$occupation_natural_resources_construction_maintenance)
+```
+```{r}
+#log(occupation_natural_resources_construction_maintenance) is fine. 
+qqnorm(sqrt(zacs_features1$occupation_natural_resources_construction_maintenance[zacs_features1$occupation_natural_resources_construction_maintenance!=0]))
+qqline(sqrt(zacs_features1$occupation_natural_resources_construction_maintenance[zacs_features1$occupation_natural_resources_construction_maintenance!=0]))
+```
+```{r}
+# Checking Normal distribution for median_age
+qqnorm(zacs_features1$median_age)
+```
+
+```{r}
+#log(median_age) is fine. 
+qqnorm(log(zacs_features1$median_age))
+qqline(log(zacs_features1$median_age))
+```
+```{r}
+# Checking Normal distribution for white_pop
+qqnorm(zacs_features1$white_pop)
+```
+```{r}
+#log(white_pop) is fine. 
+qqnorm(sqrt(zacs_features1$white_pop))
+qqline(sqrt(zacs_features1$white_pop))
+```
+```{r}
+#log(hispanic_pop) is fine. 
+qqnorm(log(zacs_features1$hispanic_pop[zacs_features1$hispanic_pop!=0]))
+qqline(log(zacs_features1$hispanic_pop[zacs_features1$hispanic_pop!=0]))
+```
+```{r}
+#log(hispanic_pop) is fine. 
+qqnorm(sqrt(zacs_features1$total_pop[zacs_features1$total_pop!=0]))
+qqline(sqrt(zacs_features1$total_pop[zacs_features1$total_pop!=0]))
+```
+
+```{r}
+#log(black_pop) is fine. 
+qqnorm(log(zacs_features1$black_pop[zacs_features1$black_pop!=0]))
+qqline(log(zacs_features1$black_pop[zacs_features1$black_pop!=0]))
+```
+```{r}
+#log(walked_to_work) is fine. 
+qqnorm(log(zacs_features1$walked_to_work[zacs_features1$walked_to_work!=0]))
+qqline(log(zacs_features1$walked_to_work[zacs_features1$walked_to_work!=0]))
+```
+```{r}
+#log(commuters_by_public_transportation) is fine. 
+qqnorm(log(zacs_features1$commuters_by_public_transportation[zacs_features1$commuters_by_public_transportation!=0]))
+qqline(log(zacs_features1$commuters_by_public_transportation[zacs_features1$commuters_by_public_transportation!=0]))
+```
+
+```{r}
+#log(commute_10_14_mins) is fine. 
+qqnorm(log(zacs_features1$commute_10_14_mins[zacs_features1$commute_10_14_mins!=0]))
+qqline(log(zacs_features1$commute_10_14_mins[zacs_features1$commute_10_14_mins!=0]))
+```
+
+```{r}
+# merging zacs_features2 with edu file created from Ben's dataset in python
+edu = read.csv("./edu.csv")
+```
+```{r}
+head(edu)
+```
+```{r}
+# full joined zacs_features2 with edu
+zacs_features2_edu = zacs_features2 %>% 
+  full_join(., edu, by = c("Year", "RegionName"))
+```
+```{r}
+dim(zacs_features2_edu)
+```
+```{r}
+zacs_edu = zacs %>% 
+  full_join(., edu, by = c("RegionName","Year", "Month"))
+```
+```{r}
+#This file was created in python by merging on RegionID, Name, Year and Month for edu dataframe and zacs
+zacs_edu = read.csv('zacs_edu.csv', header = TRUE)
+```
+```{r}
+dim(zacs_edu)
+```
+```{r}
+head(zacs_edu)
+```
+
+```{r}
+# Imputed values for 2018 based on median value of previous years by region.
+zacs_edu1 = zacs_edu %>% 
+  select(-X) %>% 
+  group_by(.,RegionName) %>% 
+  mutate(.,medALL_RATE = median(ALL_RATE, na.rm=TRUE)) %>%
+  mutate(., ALL_RATE = ifelse(is.na(ALL_RATE) & Year == 2018, medALL_RATE, ALL_RATE)) #%>% 
+```
+```{r}
+zacs_edu1
+```
+
+```{r}
+write.csv(zacs_edu1, "zacs_edu1.csv")
+```
+
+```{r}
+#Filtered out all the blank FIPST rows. We may have to revisit for imputation of some values
+zacs_edu = zacs_edu %>% 
+  filter(., !is.na(FIPST))
+```
+```{r}
+dim(zacs_edu)
+```
+
+```{r}
+#Created another file just so in case we need to go back and impute values in the remaining "edu" columns
+write.csv(zacs_edu, "zacs_edu2.csv")
+```
+```{r}
+zacs_edu2=read.csv("zacs_edu2.csv")
+```
+```{r}
+zacs_edu2 = zacs_edu2 %>% 
+  select(-c(X.1, X))
+```
+```{r}
+write.csv(zacs_edu2, "zacs_edu2.csv")
+```
+```{r}
+head(zacs_edu2)
+```
+```{r}
+# Checking normal distribution of Of FIPS and ALL_RATE education variables
+qqnorm((zacs_edu2$FIPST))
+qqline((zacs_edu2$FIPST))
+```
+```{r}
+# Checking normal distribution of FIPS and ALL_RATE education variables
+qqnorm((zacs_edu2$ALL_RATE)^3)
+qqline((zacs_edu2$ALL_RATE)^3)
+```
+
+```{r}
+# Transforming the variables and reading them in a new dataframe
+zacs_features4 = zacs_edu2 %>% 
+  mutate(., logZORI = log(ZORI),
+         logrenter_occupied_housing_units_paying_cash_median_gross_rent = log(renter_occupied_housing_units_paying_cash_median_gross_rent),
+         logowner_occupied_housing_units_median_value = log(owner_occupied_housing_units_median_value),
+         sqrtmarried_households= sqrt(married_households), 
+         loghousing_units_renter_occupied= log(housing_units_renter_occupied),
+         sqrtnonfamily_households = sqrt(nonfamily_households),
+         logvacant_housing_units_for_rent=log(vacant_housing_units_for_rent), 
+         logmedian_income=log(median_income), 
+         logincome_200000_or_more = log(ifelse(income_200000_or_more == 0, 1, income_200000_or_more)), 
+         sqrtincome_100000_199999 = sqrt(income_100000_199999), 
+         sqrtincome_75000_99999 = sqrt(income_75000_99999), 
+         logincome_0_29999= log(ifelse(income_0_29999 ==0, 1, income_0_29999)),
+         logmillion_dollar_housing_units= log(ifelse(million_dollar_housing_units==0, 1, million_dollar_housing_units)),
+         logdwellings_50_or_more_units = log(ifelse(dwellings_50_or_more_units ==0, 1, dwellings_50_or_more_units)),
+         logdwellings_20_to_49_units = log(ifelse(dwellings_20_to_49_units ==0, 1, dwellings_20_to_49_units)),
+         logdwellings_1_units_attached =log(ifelse(dwellings_1_units_attached ==0, 1, dwellings_1_units_attached)),
+         loggraduate_professional_degree = log(graduate_professional_degree), 
+         logbachelors_degree_or_higher_25_64 = log(bachelors_degree_or_higher_25_64), 
+         logemployed_information = log(ifelse(employed_information ==0, 1, employed_information)),
+         logmanagement_business_sci_arts_employed =log(ifelse(management_business_sci_arts_employed == 0, 1,                                           management_business_sci_arts_employed)),
+         sqrtoccupation_natural_resources_construction_maintenance=sqrt(ifelse(occupation_natural_resources_construction_maintenance ==0, 1,occupation_natural_resources_construction_maintenance)),
+         logmedian_age= log(median_age), sqrtwhite_pop =sqrt(white_pop),
+         loghispanic_pop =log(ifelse(hispanic_pop ==0, 1, hispanic_pop)), 
+         sqrttotal_pop =sqrt(ifelse(total_pop == 0, 1, total_pop)), 
+         logblack_pop = log(ifelse(black_pop == 0, 1, black_pop)), 
+         logwalked_to_work = log(ifelse(walked_to_work==0, 1, walked_to_work)), 
+         logcommuters_by_public_transportation = log(ifelse(commuters_by_public_transportation==0, 1, commuters_by_public_transportation)), 
+         logcommute_10_14_mins = log(ifelse(commute_10_14_mins ==0, 1, commute_10_14_mins)),
+         log_gini_index =log(gini_index)
+ )
+```
+```{r}
+head(zacs_features4)
+```
+```{r}
+zacs_features4= zacs_features4 %>% 
+  select(.,-c(Month, owner_occupied_housing_units_median_value, renter_occupied_housing_units_paying_cash_median_gross_rent, married_households,housing_units_renter_occupied, nonfamily_households, vacant_housing_units_for_rent,median_income, income_200000_or_more, income_100000_199999, income_75000_99999, income_0_29999, million_dollar_housing_units,dwellings_50_or_more_units, dwellings_20_to_49_units, dwellings_1_units_attached, graduate_professional_degree, bachelors_degree_or_higher_25_64, employed_information, management_business_sci_arts_employed,occupation_natural_resources_construction_maintenance, median_age, white_pop, hispanic_pop, total_pop, black_pop, walked_to_work, commuters_by_public_transportation, commute_10_14_mins, gini_index, ZORI))
+```
+
+```{r}
+# Writing CSv now with edu features
+write.csv(zacs_features4, "zacs_features4.csv")
+
 ```
 
