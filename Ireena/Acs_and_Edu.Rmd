@@ -1,0 +1,144 @@
+---
+title: "R Notebook"
+#output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(lubridate)
+library(datasets)
+```
+
+```{r}
+zori_acs= read.csv('./zori_acs.csv', header = TRUE)
+```
+```{r}
+zori_acs = zori_acs %>% 
+  select(-c(X.1, X))
+```
+```{r}
+head(zori_acs)
+```
+```{r}
+zori_acs_cleaned = zori_acs %>% 
+  filter(., Year<=2018) %>% 
+  filter(., !is.na(nonfamily_households)) %>% 
+  filter(.,!is.na(white_including_hispanic))
+```
+```{r}
+write.csv(zori_acs_cleaned, "zori_acs_cleaned.csv")
+```
+```{r}
+zacs_thru2018  =read.csv("zacs_thru2018.csv")
+```
+```{r}
+zacs_thru2018 = zacs_thru2018 %>% 
+  filter(., !is.na(nonfamily_households)) %>% 
+  filter(.,!is.na(white_including_hispanic))
+```
+```{r}
+head(zacs_thru2018)
+write.csv
+```
+```{r}
+# Reading the covid file and cleaning
+covid = read_csv("covid_us.csv")
+```
+```{r}
+head(covid)
+```
+```{r}
+covid  = covid %>% 
+  mutate(., Month = month(date), Year = year(date), Day =day(date))
+```
+```{r}
+dim(covid)
+```
+```{r}
+covid = covid %>% 
+  filter(.,!is.na(region_name)) %>% 
+  group_by(., region_name, Year, Month) %>% 
+  filter(., ifelse(Month ==2, Day == 29, Day ==30 | Day ==31)) %>% 
+  filter(!is.na(stringency_index)) %>% 
+  select(., c(region_name, confirmed_cases, deaths,stringency_index, Month, Year, Day)) %>%
+  arrange(., Year, Month) %>% 
+  rename(., state.name =region_name)
+```
+```{r}
+write_csv(covid, "covidR.csv")
+```
+
+```{r}
+zoriN = read_csv("zoriN.csv")
+```
+
+```{r}
+state_df = data.frame(state.name, state.abb, state.region, stringsAsFactors = F)
+```
+```{r}
+head(state_df)
+```
+
+```{r}
+zoriN = zoriN %>% 
+  mutate(., state.abb= str_sub(zoriN$MsaName, -2)) 
+```
+```{r}
+zoriN =zoriN %>% 
+  mutate(., MsaName= str_remove(zoriN$MsaName, ","))
+```
+
+```{r}
+head(zoriN)
+```
+```{r}
+zoriN = zoriN %>% 
+left_join(state_df, by = c("state.abb"))
+```
+
+```{r}
+zoriN = zoriN %>% 
+  filter(., ZORI<6000) %>%
+  group_by(., state.name, Year, Month) %>% 
+  summarise(medZORI = median(ZORI))
+```
+```{r}
+write_csv(zoriN, "zoriNtesting.csv")
+dim(zoriN)
+```
+
+
+```{r}
+#Joined covid with zoriN
+zori_covid = zoriN %>% 
+  left_join(., covid, by = c("state.name", "Year", "Month")) %>% 
+  mutate(.,confirmed_cases = ifelse(is.na(confirmed_cases), 0, confirmed_cases), 
+         deaths = ifelse(is.na(deaths), 0, deaths),
+         stringency_index = ifelse(is.na(stringency_index), 0, stringency_index)
+         ) %>% 
+  select(-Day)
+```
+```{r}
+head(zori_covid)
+```
+```{r}
+zori_covid %>% 
+  filter(., Year == 2020 |Year ==2021) %>% 
+ggplot(aes(x= confirmed_cases, y= medZORI)) +
+  geom_point()
+```
+```{r}
+zori_covid %>% 
+    filter(., Year == 2020 |Year ==2021) %>% 
+ggplot(aes(x= state.name, y= medZORI)) +
+  geom_boxplot(aes(color=Year))+
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+```{r}
+write_csv(zori_covid, "zori_covid.csv")
+```
+```{r}
+
+```
+
+
